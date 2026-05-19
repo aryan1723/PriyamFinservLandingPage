@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
-cd /var/www/html
+cd /var/www
 
-echo "[boot] Writing .env..."
-cat > .env << ENVEOF
+echo "=== Writing .env ==="
+cat > .env <<ENVEOF
 APP_NAME="Priyam Finserv"
 APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=false
-APP_URL=${APP_URL:-https://priyamfinserv.up.railway.app}
+APP_URL=${APP_URL:-https://priyamfinservlandingpage.up.railway.app}
 
 DB_CONNECTION=${DB_CONNECTION:-pgsql}
 DATABASE_URL=${DATABASE_URL}
@@ -33,27 +33,20 @@ LOG_CHANNEL=errorlog
 LOG_LEVEL=error
 ENVEOF
 
-echo "[boot] Running migrations..."
+echo "=== Migrating database ==="
 php artisan migrate --force --no-interaction
 
-echo "[boot] Setting up storage..."
+echo "=== Storage link ==="
 php artisan storage:link --force 2>/dev/null || true
 
-echo "[boot] Caching..."
+echo "=== Caching ==="
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "[boot] Fixing permissions..."
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+echo "=== Fixing permissions ==="
+chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Handle Railway PORT env var - update Apache to listen on it
-if [ -n "$PORT" ] && [ "$PORT" != "80" ]; then
-    echo "[boot] Setting Apache to listen on PORT=$PORT"
-    sed -i "s/Listen 80/Listen $PORT/" /etc/apache2/ports.conf
-    sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/" /etc/apache2/sites-enabled/*.conf
-fi
-
-echo "[boot] ✓ Starting Apache..."
-exec apache2-foreground
+PORT=${PORT:-8000}
+echo "=== Starting PHP server on port $PORT ==="
+exec php artisan serve --host=0.0.0.0 --port="$PORT"

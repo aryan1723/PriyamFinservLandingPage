@@ -1,4 +1,4 @@
-FROM php:8.4-apache
+FROM php:8.4-cli-bookworm
 
 # ── System dependencies ────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -13,25 +13,11 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         pdo pdo_mysql pdo_pgsql \
         mbstring exif pcntl bcmath zip gd opcache
 
-# ── Apache config: point DocumentRoot to /var/www/public ──────────────────────
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
-    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-# Fix MPM conflict: remove ALL mpm symlinks, then recreate only mpm_prefork
-RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
- && rm -f /etc/apache2/mods-available/mpm_event.load /etc/apache2/mods-available/mpm_worker.load \
- && ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load \
- && ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf \
- && a2enmod rewrite \
- && apache2ctl configtest
-
 # ── Composer ───────────────────────────────────────────────────────────────────
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
 # ── App source ─────────────────────────────────────────────────────────────────
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 COPY composer.json composer.lock ./
 RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist --no-scripts
@@ -41,15 +27,13 @@ COPY . .
 RUN composer run-script post-autoload-dump 2>/dev/null || true
 
 # ── Permissions ────────────────────────────────────────────────────────────────
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# ── Startup script ─────────────────────────────────────────────────────────────
+# ── Startup ────────────────────────────────────────────────────────────────────
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-# Railway injects PORT — Apache needs to listen on it
-ENV PORT=80
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["/usr/local/bin/start.sh"]
