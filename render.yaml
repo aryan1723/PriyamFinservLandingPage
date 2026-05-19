@@ -10,6 +10,7 @@ services:
     runtime: docker
     plan: free
     healthCheckPath: /
+        port: 80
     autoDeploy: true
 
     envVars:
