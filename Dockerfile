@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-bookworm
+FROM php:8.3-fpm-bookworm
 
 # ── System dependencies ────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -19,14 +19,20 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 # ── App source ─────────────────────────────────────────────────────────────────
 WORKDIR /var/www
 
-COPY . .
-
-# Install PHP dependencies (production, no dev)
+# Copy composer files first for better layer caching
+COPY composer.json composer.lock ./
 RUN composer install \
         --optimize-autoloader \
         --no-dev \
         --no-interaction \
-        --prefer-dist
+        --prefer-dist \
+        --no-scripts
+
+# Copy the rest of the app
+COPY . .
+
+# Run composer scripts now that the full app is present
+RUN composer run-script post-autoload-dump || true
 
 # Storage / bootstrap permissions
 RUN chown -R www-data:www-data /var/www \
