@@ -9,7 +9,7 @@ APP_NAME="Priyam Finserv"
 APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=false
-APP_URL=${APP_URL:-https://priyamfinservlandingpage.up.railway.app}
+APP_URL=https://priyamfinservlandingpage-production.up.railway.app
 
 DB_CONNECTION=${DB_CONNECTION:-pgsql}
 DATABASE_URL=${DATABASE_URL}
