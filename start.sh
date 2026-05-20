@@ -3,6 +3,10 @@ set -e
 
 cd /var/www
 
+# Force HTTPS — override any http:// value Railway may inject
+export APP_URL="https://priyamfinservlandingpage-production.up.railway.app"
+export ASSET_URL="https://priyamfinservlandingpage-production.up.railway.app"
+
 echo "=== Writing .env ==="
 cat > .env <<ENVEOF
 APP_NAME="Priyam Finserv"
