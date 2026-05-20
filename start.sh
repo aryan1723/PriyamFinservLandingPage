@@ -10,6 +10,7 @@ APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=false
 APP_URL=https://priyamfinservlandingpage-production.up.railway.app
+ASSET_URL=https://priyamfinservlandingpage-production.up.railway.app
 
 DB_CONNECTION=${DB_CONNECTION:-pgsql}
 DATABASE_URL=${DATABASE_URL}
