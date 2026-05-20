@@ -40,6 +40,11 @@ php artisan migrate --force --no-interaction
 echo "=== Storage link ==="
 php artisan storage:link --force 2>/dev/null || true
 
+echo "=== Clearing old caches ==="
+php artisan view:clear
+php artisan cache:clear
+php artisan config:clear
+
 echo "=== Caching ==="
 php artisan config:cache
 php artisan route:cache
