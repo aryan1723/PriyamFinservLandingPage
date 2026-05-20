@@ -6,7 +6,7 @@
     <meta name="description" content="Priyam Finserv Private Limited - Premier financial consultancy and corporate advisory services.">
     <title>@yield('title', 'Priyam Finserv | Financial Consultancy')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://priyamfinservlandingpage-production.up.railway.app/css/style.css">
 </head>
 <body>
 
