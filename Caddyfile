@@ -1,0 +1,14 @@
+:{$PORT:8080}
+
+root * /var/www/public
+
+# Serve static files directly (CSS, JS, images, fonts, etc.)
+@static file
+handle @static {
+    file_server
+}
+
+# Proxy all other requests to Laravel (artisan serve)
+handle {
+    reverse_proxy localhost:8000
+}

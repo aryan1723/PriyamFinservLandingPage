@@ -1,10 +1,18 @@
 FROM php:8.4-cli-bookworm
 
-# ── System dependencies (PHP + Node.js) ───────────────────────────────────────
+# ── System dependencies ────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        git curl zip unzip gnupg \
+        git curl zip unzip gnupg debian-keyring debian-archive-keyring apt-transport-https \
         libpng-dev libonig-dev libxml2-dev libzip-dev \
         libpq-dev libfreetype6-dev libjpeg62-turbo-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Caddy web server ───────────────────────────────────────────────────────────
+RUN curl -fsSL 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
+        | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
+    && curl -fsSL 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
+        | tee /etc/apt/sources.list.d/caddy-stable.list \
+    && apt-get update && apt-get install -y caddy \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Node.js 20 ────────────────────────────────────────────────────────────────
@@ -45,10 +53,13 @@ RUN composer run-script post-autoload-dump 2>/dev/null || true
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
+# ── Caddyfile ─────────────────────────────────────────────────────────────────
+COPY Caddyfile /etc/caddy/Caddyfile
+
 # ── Startup ────────────────────────────────────────────────────────────────────
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["/usr/local/bin/start.sh"]

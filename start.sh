@@ -47,6 +47,8 @@ php artisan view:cache
 echo "=== Fixing permissions ==="
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-PORT=${PORT:-8000}
-echo "=== Starting PHP server on port $PORT ==="
-exec php artisan serve --host=0.0.0.0 --port="$PORT"
+echo "=== Starting PHP (artisan serve) on port 8000 ==="
+php artisan serve --host=127.0.0.1 --port=8000 &
+
+echo "=== Starting Caddy on port ${PORT:-8080} ==="
+exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
