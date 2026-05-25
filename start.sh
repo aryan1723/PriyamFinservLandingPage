@@ -36,10 +36,17 @@ MAIL_FROM_NAME="Priyam Finserv"
 
 LOG_CHANNEL=errorlog
 LOG_LEVEL=error
+
+ADMIN_EMAIL=${ADMIN_EMAIL:-admin@priyamfinserv.com}
+ADMIN_NAME=${ADMIN_NAME:-Admin}
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-changeme123}
 ENVEOF
 
 echo "=== Migrating database ==="
 php artisan migrate --force --no-interaction
+
+echo "=== Seeding admin account ==="
+php artisan db:seed --class=AdminSeeder --force --no-interaction
 
 echo "=== Storage link ==="
 php artisan storage:link --force 2>/dev/null || true
