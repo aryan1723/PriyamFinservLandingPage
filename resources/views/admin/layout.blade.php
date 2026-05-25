@@ -18,6 +18,8 @@
             --sidebar-width: 260px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        a, button, input, select, textarea, label { touch-action: manipulation; }
+
         body { display: flex; height: 100vh; background-color: var(--content-bg); color: #333; overflow: hidden; }
 
         /* ── Sidebar ── */
