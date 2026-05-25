@@ -3,7 +3,7 @@
 @section('title', $post->title . ' | Priyam Finserv')
 
 @section('content')
-    <article class="page-top" style="padding-bottom: 4rem; background: var(--bg-color); min-height: calc(100vh - 60px);">
+    <article style="padding-top: 3rem; padding-bottom: 4rem; background: var(--bg-color); min-height: calc(100vh - 60px);">
         <div class="container" style="max-width: 800px; margin: 0 auto;">
             
             <a href="{{ url('/blog') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; margin-bottom: 2rem; transition: color 0.3s;">

@@ -461,6 +461,139 @@ header {
 /* Spacing utility */
 .section-gap { margin-top: 3rem; }
 
+/* ─── Hamburger Button ─── */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 1100;
+    position: relative;
+}
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--primary-black);
+    border-radius: 2px;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease,
+                width 0.3s ease;
+    transform-origin: center;
+}
+/* Animate to X when active */
+.hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
+.hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ─── Mobile Nav Overlay ─── */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(9, 9, 11, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.mobile-nav.open {
+    opacity: 1;
+}
+.mobile-nav-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    padding: 1.4rem 1.6rem 2rem;
+    transform: translateY(-100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+.mobile-nav.open .mobile-nav-inner {
+    transform: translateY(0);
+}
+.mobile-nav-brand {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--primary-black);
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.mobile-nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.mobile-nav-links li {
+    border-bottom: 1px solid var(--border-color);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.mobile-nav.open .mobile-nav-links li { opacity: 1; transform: translateY(0); }
+.mobile-nav.open .mobile-nav-links li:nth-child(1) { transition-delay: 0.08s; }
+.mobile-nav.open .mobile-nav-links li:nth-child(2) { transition-delay: 0.13s; }
+.mobile-nav.open .mobile-nav-links li:nth-child(3) { transition-delay: 0.18s; }
+.mobile-nav.open .mobile-nav-links li:nth-child(4) { transition-delay: 0.23s; }
+.mobile-nav.open .mobile-nav-links li:nth-child(5) { transition-delay: 0.28s; }
+
+.mobile-nav-links a {
+    display: block;
+    padding: 1rem 0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--primary-black);
+    letter-spacing: 0.3px;
+}
+.mobile-nav-links a:hover { color: #52525b; }
+
+.mobile-nav-cta {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.7rem 1.4rem !important;
+    background: var(--primary-black);
+    color: #fff !important;
+    border-radius: var(--radius);
+    font-size: 0.88rem !important;
+}
+
+.mobile-nav-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    background: none;
+    border: none;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    color: #dc2626;
+    cursor: pointer;
+    width: 100%;
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 992px) {
     .hero h1 { font-size: 3rem; }
@@ -474,7 +607,11 @@ header {
     .hero h1 { font-size: 2.5rem; }
     .navbar { padding: 0.8rem 0; }
     .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-nav { display: block; }
     .section { padding: 3.5rem 0; }
     .section-title { font-size: 2rem; }
     .dash-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .dash-tabs { overflow-x: auto; }
+    .dash-tab { white-space: nowrap; font-size: 0.82rem; padding: 0.65rem 1rem; }
 }

@@ -24,7 +24,7 @@
                 <a href="{{ url('/') }}" class="brand">
                     <i class="fa-solid fa-gem"></i> Priyam Finserv
                 </a>
-                
+
                 @if(Request::is('dashboard'))
                     <ul class="nav-links">
                         <li>
@@ -34,6 +34,23 @@
                             </form>
                         </li>
                     </ul>
+                    <!-- Dashboard hamburger: only logout -->
+                    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="mobile-nav" id="mobileNav">
+                        <div class="mobile-nav-inner">
+                            <div class="mobile-nav-brand"><i class="fa-solid fa-gem"></i> Priyam Finserv</div>
+                            <ul class="mobile-nav-links">
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="mobile-nav-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 @else
                     <ul class="nav-links">
                         <li><a href="{{ url('/') }}#services">Services</a></li>
@@ -50,6 +67,30 @@
                             <li><a href="{{ route('login') }}" class="btn btn-primary" style="color: #ffffff;"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></li>
                         @endauth
                     </ul>
+                    <!-- Main hamburger -->
+                    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="mobile-nav" id="mobileNav">
+                        <div class="mobile-nav-inner">
+                            <div class="mobile-nav-brand"><i class="fa-solid fa-gem"></i> Priyam Finserv</div>
+                            <ul class="mobile-nav-links">
+                                <li><a href="{{ url('/') }}#services">Services</a></li>
+                                <li><a href="{{ url('/') }}#about">About</a></li>
+                                <li><a href="{{ url('/blog') }}">Insights</a></li>
+                                <li><a href="{{ url('/contact') }}">Contact</a></li>
+                                @auth
+                                    @if(Auth::user()->role === 'admin')
+                                        <li><a href="{{ url('/admin') }}"><i class="fa-solid fa-shield-halved"></i> Admin Panel</a></li>
+                                    @else
+                                        <li><a href="{{ url('/dashboard') }}"><i class="fa-solid fa-user"></i> Dashboard</a></li>
+                                    @endif
+                                @else
+                                    <li><a href="{{ route('login') }}" class="mobile-nav-cta"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a></li>
+                                @endauth
+                            </ul>
+                        </div>
+                    </div>
                 @endif
             </nav>
         </div>
@@ -89,6 +130,46 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        (function () {
+            var btn = document.getElementById('hamburgerBtn');
+            var nav = document.getElementById('mobileNav');
+            if (!btn || !nav) return;
+
+            function openMenu() {
+                nav.classList.add('open');
+                btn.classList.add('active');
+                btn.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMenu() {
+                nav.classList.remove('open');
+                btn.classList.remove('active');
+                btn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            btn.addEventListener('click', function () {
+                nav.classList.contains('open') ? closeMenu() : openMenu();
+            });
+
+            // Close on any link click inside mobile nav
+            nav.querySelectorAll('a').forEach(function (a) {
+                a.addEventListener('click', closeMenu);
+            });
+
+            // Close on ESC
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeMenu();
+            });
+
+            // Close when tapping the backdrop (outside the inner panel)
+            nav.addEventListener('click', function (e) {
+                if (e.target === nav) closeMenu();
+            });
+        })();
+    </script>
 
 </body>
 </html>
