@@ -10,7 +10,7 @@
 </head>
 <body>
 
-    <header>
+    <header id="site-header">
         @php
             $global_announcement = \App\Models\Announcement::where('is_active', true)->latest()->first();
         @endphp
@@ -132,20 +132,37 @@
     </footer>
 
     <script>
-        // ── Fix: sync body padding-top to actual header height (accounts for announcement bar) ──
+        // ── Sync header height as CSS var + body padding (handles announcement bar) ──
         (function () {
-            var header = document.querySelector('header');
-            function syncPadding() {
-                if (header) document.body.style.paddingTop = header.offsetHeight + 'px';
+            var hdr = document.getElementById('site-header');
+            function syncHeader() {
+                if (!hdr) return;
+                var h = hdr.offsetHeight;
+                document.body.style.paddingTop = h + 'px';
+                document.documentElement.style.setProperty('--header-h', h + 'px');
             }
-            syncPadding();
-            window.addEventListener('resize', syncPadding);
+            syncHeader();
+            window.addEventListener('resize', syncHeader);
         })();
 
+        // ── Hamburger menu (mobile) ──
         (function () {
             var btn = document.getElementById('hamburgerBtn');
             var nav = document.getElementById('mobileNav');
             if (!btn || !nav) return;
+
+            // Prevent 300ms tap delay on mobile
+            btn.style.touchAction = 'manipulation';
+
+            var locked = false; // debounce double-fire (touchstart + click)
+            function toggle(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (locked) return;
+                locked = true;
+                setTimeout(function () { locked = false; }, 400);
+                nav.classList.contains('open') ? closeMenu() : openMenu();
+            }
 
             function openMenu() {
                 nav.classList.add('open');
@@ -160,21 +177,17 @@
                 document.body.style.overflow = '';
             }
 
-            btn.addEventListener('click', function () {
-                nav.classList.contains('open') ? closeMenu() : openMenu();
-            });
+            btn.addEventListener('touchstart', toggle, { passive: false });
+            btn.addEventListener('click', toggle);
 
-            // Close on any link click inside mobile nav
             nav.querySelectorAll('a').forEach(function (a) {
                 a.addEventListener('click', closeMenu);
             });
 
-            // Close on ESC
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') closeMenu();
             });
 
-            // Close when tapping the backdrop (outside the inner panel)
             nav.addEventListener('click', function (e) {
                 if (e.target === nav) closeMenu();
             });
