@@ -132,6 +132,16 @@
     </footer>
 
     <script>
+        // ── Fix: sync body padding-top to actual header height (accounts for announcement bar) ──
+        (function () {
+            var header = document.querySelector('header');
+            function syncPadding() {
+                if (header) document.body.style.paddingTop = header.offsetHeight + 'px';
+            }
+            syncPadding();
+            window.addEventListener('resize', syncPadding);
+        })();
+
         (function () {
             var btn = document.getElementById('hamburgerBtn');
             var nav = document.getElementById('mobileNav');
