@@ -25,7 +25,7 @@
                         <p>Clients Served</p>
                     </div>
                     <div class="stat-item">
-                        <h3>₹100Cr+</h3>
+                        <h3>₹2000Cr+</h3>
                         <p>Loans Processed</p>
                     </div>
                 </div>
